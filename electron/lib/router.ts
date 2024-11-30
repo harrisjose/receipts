@@ -1,5 +1,5 @@
-import { createElectronRouter } from 'electron-router-dom'
- 
+import { createElectronRouter } from "electron-router-dom";
+
 export const { Router, registerRoute } = createElectronRouter({
   port: 5173,
   types: {
@@ -8,6 +8,6 @@ export const { Router, registerRoute } = createElectronRouter({
      * this new way will allow your editor's intelisense to help you know which ids are available to use
      * both in the main and renderer process
      */
-    ids: ['main'],
+    ids: ["main"],
   },
-})
+});

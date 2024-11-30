@@ -1,78 +1,82 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell } from "electron";
 
-import path from 'node:path'
-import os from 'node:os'
-import { update } from './update'
-import { createIPCHandler } from 'electron-trpc/main';
-import { router } from './api'
-import { registerRoute } from '../lib/router'
-import { RENDERER_DIST, __dirname } from '../lib/config'
+import { createIPCHandler } from "electron-trpc/main";
+import os from "node:os";
+import path from "node:path";
+import { __dirname, RENDERER_DIST } from "../lib/config";
+import { registerRoute } from "../lib/router";
+import { router } from "./api";
+import { update } from "./update";
 
 // Disable GPU Acceleration for Windows 7
-if (os.release().startsWith('6.1')) app.disableHardwareAcceleration()
+if (os.release().startsWith("6.1")) app.disableHardwareAcceleration();
 
 // Set application name for Windows 10+ notifications
-if (process.platform === 'win32') app.setAppUserModelId(app.getName())
+if (process.platform === "win32") app.setAppUserModelId(app.getName());
 
 if (!app.requestSingleInstanceLock()) {
-  app.quit()
-  process.exit(0)
+  app.quit();
+  process.exit(0);
 }
 
 // App lifecycle listeners
-let win: BrowserWindow | null = null
+let win: BrowserWindow | null = null;
 
-app.on('window-all-closed', () => {
-  win = null
-  if (process.platform !== 'darwin') app.quit()
-})
+app.on("window-all-closed", () => {
+  win = null;
+  if (process.platform !== "darwin") app.quit();
+});
 
-app.on('second-instance', () => {
+app.on("second-instance", () => {
   if (win) {
     // Focus on the main window if the user tried to open another
-    if (win.isMinimized()) win.restore()
-    win.focus()
+    if (win.isMinimized()) win.restore();
+    win.focus();
   }
-})
+});
 
-app.on('activate', () => {
-  const allWindows = BrowserWindow.getAllWindows()
+app.on("activate", () => {
+  const allWindows = BrowserWindow.getAllWindows();
   if (allWindows.length) {
-    allWindows[0].focus()
+    allWindows[0].focus();
   } else {
-    createWindow()
+    createWindow();
   }
-})
+});
 
 // Window setup
-const preload = path.join(__dirname, '../preload/index.mjs')
-const indexHtml = path.join(RENDERER_DIST, 'index.html')
+const preload = path.join(__dirname, "../preload/index.mjs");
+const indexHtml = path.join(RENDERER_DIST, "index.html");
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'Main window',
-    icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    title: "Main window",
+    titleBarStyle: "hidden",
+    trafficLightPosition: { x: 16, y: 16 },
+    icon: path.join(process.env.VITE_PUBLIC, "favicon.ico"),
+    width: 1200,
+    height: 800,
     webPreferences: {
       preload,
     },
-  })
+  });
 
   // Make all links open with the browser, not with the application
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('https:')) shell.openExternal(url)
-    return { action: 'deny' }
-  })
+    if (url.startsWith("https:")) shell.openExternal(url);
+    return { action: "deny" };
+  });
 
   createIPCHandler({ router, windows: [win] });
 
   registerRoute({
-    id: 'main',
+    id: "main",
     browserWindow: win,
     htmlFile: indexHtml,
-  })
+  });
 
   // Auto update
-  update(win)
+  update(win);
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(createWindow);

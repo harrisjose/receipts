@@ -1,16 +1,26 @@
 import { Route } from "react-router-dom";
 import { Router } from "../electron/lib/router";
 
+import { Collections } from "./pages/Collections";
+import { Filters } from "./pages/Filters";
 import { Layout } from "./pages/Layout";
+import { Settings } from "./pages/Settings";
 
 export function AppRoutes() {
   return (
     <Router
       main={
-        <>
-          <Route path="/" element={<Layout />} />
-        </>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Collections />} />
+          <Route path="filters" element={<Filters />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
       }
+      _providerProps={{
+        future: {
+          v7_startTransition: true,
+        },
+      }}
     />
   );
 }

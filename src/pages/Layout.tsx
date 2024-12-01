@@ -32,7 +32,7 @@ const navLinks: NavigationGroup[] = [
     links: [
       {
         title: "Accounts",
-        url: "/settings",
+        url: "/accounts",
         icon: UserCog,
       },
       {

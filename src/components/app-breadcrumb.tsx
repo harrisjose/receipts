@@ -13,7 +13,7 @@ export function AppBreadcrumb({ links }: { links: NavigationLink[] }) {
   const activeLink = links.find((link) => link.url === location.pathname);
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className="drag-none">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="#/main/">Home</BreadcrumbLink>

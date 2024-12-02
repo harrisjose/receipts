@@ -49,12 +49,12 @@ export const Layout = () => {
     <SidebarProvider>
       <AppSidebar links={navLinks} />
       <SidebarInset>
-        <nav className="flex items-center gap-2 py-2 px-2">
-          <SidebarTrigger />
+        <nav className="flex items-center gap-2 py-2 px-2 drag-allow">
+          <SidebarTrigger className="drag-none" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <AppBreadcrumb links={navLinks.flatMap((group) => group.links)} />
         </nav>
-        <section className="py-4 px-4">
+        <section className="py-4 pl-6">
           <Outlet />
         </section>
       </SidebarInset>
